@@ -1,6 +1,8 @@
 package plusplus.OldBookSeller.reponsitory.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -11,6 +13,8 @@ import java.sql.Timestamp;
 @Table(name = "BOOK")
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
