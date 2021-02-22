@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface UserRepository extends JpaRepository<User,Integer> {
     List<User> findAllByEmailAndPassword(String email,String password);
+    boolean existsByEmail(String email);
 }
