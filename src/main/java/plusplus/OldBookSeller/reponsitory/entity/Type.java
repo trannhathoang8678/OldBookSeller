@@ -6,18 +6,15 @@ import lombok.Setter;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "USER")
+@Table(name = "TYPE")
 @Getter
 @Setter
-public class UserEntity {
+public class Type {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
-    @Column(name = "phonenumber")
-    private String phonenumber;
-    @Column(name = "password")
-    private String password;
-    @Column(name = "email")
-    private String email;
+    @Column(name = "type")
+    private String type;
+
 }

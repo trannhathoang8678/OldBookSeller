@@ -5,20 +5,20 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.sql.Date;
+import java.sql.Timestamp;
 
 @Entity
 @Table(name = "BOOK")
 @Getter
 @Setter
-public class BookEntity {
+public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
     @ManyToOne
     @JoinColumn(name="TYPE_id")
-    private TypeEntity type;
+    private Type type;
     @Column(name = "title")
     private String title;
     @Column(name = "description")
@@ -27,10 +27,12 @@ public class BookEntity {
     private Integer publishYear;
     @Column(name = "author")
     private String author;
-    @Column(name = "prize")
-    private BigDecimal prize;
+    @Column(name = "price")
+    private BigDecimal price;
     @Column(name = "contact_info")
     private String contactInfo;
     @Column(name = "day_posted")
-    private Date postDay;
+    private Timestamp postDay;
+    @Column(name = "url_image")
+    private String urlImage;
 }

@@ -5,15 +5,19 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
-@Embeddable
+@Entity
 @Table(name = "FAVORITE_BOOK")
 @Getter
 @Setter
-public class FavoriteBookEntity {
+public class FavoriteBook {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Integer id;
     @ManyToOne
     @JoinColumn(name = "BOOK_id")
-    private BookEntity book;
+    private Book book;
     @ManyToOne
     @JoinColumn(name = "USER_id")
-    private UserEntity user;
+    private User user;
 }
