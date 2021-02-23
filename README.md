@@ -10,6 +10,7 @@
 2. User function
 * Login/Logout
 * Register
+* Retrieve password
 * Add,update,delete books selling
 * Mark favorite book
 3. Admin function
