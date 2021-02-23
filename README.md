@@ -13,6 +13,7 @@
 * Display favorite books
 * Display upload books
 * Display user infomation
+* Update user information
 3. Admin function
 * Add,update,delete books
 * Delete user
