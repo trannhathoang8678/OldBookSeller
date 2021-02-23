@@ -1,10 +1,12 @@
 package plusplus.OldBookSeller.services;
 
+import org.springframework.stereotype.Service;
+
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.util.Properties;
-
+@Service
 public class SendEmailService {
     final String username = "student.plusplus.academy@gmail.com";
     final String password = "123456aA@";

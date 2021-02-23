@@ -8,12 +8,12 @@ import lombok.Setter;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "FAVORITE_BOOK")
+@Table(name = "USER_BOOK")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class FavoriteBook {
+public class UserBookRelationship {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -24,4 +24,12 @@ public class FavoriteBook {
     @ManyToOne
     @JoinColumn(name = "USER_id")
     private User user;
+    @Column(name = "relationship")
+    private String relationship;
+
+    public UserBookRelationship(Book book, User user, String relationship) {
+        this.book = book;
+        this.user = user;
+        this.relationship = relationship;
+    }
 }

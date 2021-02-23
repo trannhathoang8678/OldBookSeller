@@ -19,11 +19,12 @@ USE `bookdb` ;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `bookdb`.`USER` (
   `id` INT NOT NULL,
-  `phonenumber` CHAR(10) NOT NULL,
+  `email` VARCHAR(45) NOT NULL,
   `password` VARCHAR(45) NOT NULL,
-  `email` VARCHAR(45) NULL,
+  `phonenumber` CHAR(10) NULL,
+  `token` VARCHAR(45) NULL,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `phonenumber_UNIQUE` (`phonenumber` ASC))
+  UNIQUE INDEX `email_UNIQUE` (`email` ASC))
 ENGINE = InnoDB;
 
 
@@ -58,17 +59,17 @@ CREATE TABLE IF NOT EXISTS `bookdb`.`BOOK` (
     REFERENCES `bookdb`.`TYPE` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `bookdb`.`FAVORITE_BOOK`
+-- Table `bookdb`.`USER_BOOK`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bookdb`.`FAVORITE_BOOK` (
+CREATE TABLE IF NOT EXISTS `bookdb`.`USER_BOOK` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `BOOK_id` INT NOT NULL,
   `USER_id` INT NOT NULL,
+  `relationship` VARCHAR(45) NULL,
   INDEX `fk_FAVORITE_BOOK_BOOK1_idx` (`BOOK_id` ASC),
   INDEX `fk_FAVORITE_BOOK_USER1_idx` (`USER_id` ASC),
   PRIMARY KEY (`id`),
