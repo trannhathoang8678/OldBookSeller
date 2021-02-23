@@ -27,6 +27,10 @@ public class User {
     @Column(name = "token")
     private String token;
 
+    public User(Integer id) {
+        this.id = id;
+    }
+
     public User(String email, String password, String phonenumber, String token) {
         this.email = email;
         this.password = password;

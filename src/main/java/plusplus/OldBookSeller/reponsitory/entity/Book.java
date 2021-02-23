@@ -23,6 +23,11 @@ public class Book {
     @ManyToOne
     @JoinColumn(name="TYPE_id")
     private Type type;
+
+    public Book(Integer id) {
+        this.id = id;
+    }
+
     @Column(name = "title")
     private String title;
     @Column(name = "description")

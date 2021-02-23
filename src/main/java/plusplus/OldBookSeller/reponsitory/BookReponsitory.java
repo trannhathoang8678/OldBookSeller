@@ -10,7 +10,8 @@ import java.util.List;
 @Repository
 public interface BookReponsitory extends JpaRepository<Book, Integer> {
     List<Book> findAllByTitleAndType(String title, Integer typeID, Pageable pageable);
-    List<Book> findAllByType( Integer typeID, Pageable pageable);
+    List<Book> findAllByType( Integer typeID);
+    List<Book> findAllByIdIn(List<Integer> id,Pageable pageable);
     @Query(value = "SELECT * FROM BOOK WHERE title REGEXP '.*?1.*' ;",nativeQuery = true)
     List<Book> findByTitle( String title, Pageable pageable);
     Book findOneById(Integer id);

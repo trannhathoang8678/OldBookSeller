@@ -19,10 +19,10 @@ public class UserBookRelationship {
     @Column(name = "id")
     private Integer id;
     @ManyToOne
-    @JoinColumn(name = "BOOK_id")
+    @JoinColumn(name = "BOOK_id",updatable = false)
     private Book book;
     @ManyToOne
-    @JoinColumn(name = "USER_id")
+    @JoinColumn(name = "USER_id",updatable = false)
     private User user;
     @Column(name = "relationship")
     private String relationship;

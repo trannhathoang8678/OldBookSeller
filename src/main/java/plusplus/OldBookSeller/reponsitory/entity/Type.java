@@ -21,4 +21,7 @@ public class Type {
     @Column(name = "type")
     private String type;
 
+    public Type(Integer id) {
+        this.id = id;
+    }
 }

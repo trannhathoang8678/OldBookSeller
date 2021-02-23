@@ -4,9 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import plusplus.OldBookSeller.reponsitory.BookReponsitory;
+import plusplus.OldBookSeller.reponsitory.TypeRepository;
 import plusplus.OldBookSeller.reponsitory.UserBookRelationshipRepository;
 import plusplus.OldBookSeller.reponsitory.UserRepository;
 import plusplus.OldBookSeller.reponsitory.entity.Book;
+import plusplus.OldBookSeller.reponsitory.entity.Type;
 import plusplus.OldBookSeller.reponsitory.entity.User;
 import plusplus.OldBookSeller.reponsitory.entity.UserBookRelationship;
 
@@ -24,6 +26,7 @@ public class UserService {
     SendEmailService sendEmailService;
     UserRepository userRepository;
     BookReponsitory bookReponsitory;
+    TypeRepository typeRepository;
     UserBookRelationshipRepository userBookRelationshipRepository;
     public String login(String email, String password) {
         if (userRepository.existsByEmailAndPassword(email, password))
@@ -37,7 +40,7 @@ public class UserService {
         if (temporaryUser == null)
             return "Please click sent token button";
         if (temporaryUser.getPassword() != null)
-            return "Email has already regitered"
+            return "Email has already regitered";
         String sentToken = temporaryUser.getToken();
         if (!sentToken.equals(token))
             return "Wrong token, please check or send another token ";
@@ -48,16 +51,22 @@ public class UserService {
     }
 
     public String sendTokenToEmail(String email) {
-        User temporaryUser = userRepository.findOneByEmail(email);
+        try
+        {User temporaryUser = userRepository.findOneByEmail(email);
         String token = generateRandomString(6);
         if (temporaryUser == null) {
             temporaryUser = new User(email, token);
         } else {
             temporaryUser.setToken(token);
         }
-        userRepository.save(token);
+        userRepository.save(temporaryUser);
         sendEmailService.sendEmail("Token",email,token);
-        return "Sent token to email";
+        return "Sent token to email";}
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            return "Send token failed";
+        }
     }
 
     public String retrievePassword(String email,String token) {
@@ -70,10 +79,13 @@ public class UserService {
             return "Wrong token, please check or send another token ";
         return "Password: " + temporaryUser.getPassword();
     }
-
-    public List<Book> booksInType(int typeID, Pageable pageable) {
+    public List<Type> getBooksTypes()
+    {
+        return typeRepository.findAll();
+    }
+    public List<Book> booksInType(int typeID) {
         try {
-            return bookReponsitory.findAllByType(typeID, pageable);
+            return bookReponsitory.findAllByType(typeID);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -97,30 +109,66 @@ public class UserService {
             return null;
         }
     }
-
-    public User userInfo(String email) {
+    public List<Book> getBooksUserSell(int userID,Pageable pageable)
+    {
         try {
-            return userRepository.findOneByEmail(email);
+           return bookReponsitory.findAllByIdIn(userBookRelationshipRepository.findBookIdsWithRelationship(userID,"sell"),pageable);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
+    public List<Book> getBooksUserLike(int userID,Pageable pageable)
+    {
+        try {
+            return bookReponsitory.findAllByIdIn(userBookRelationshipRepository.findBookIdsWithRelationship(userID,"like"),pageable);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public User getUserInfo(int id) {
+        try {
+            return userRepository.findOneById(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    public String updateUserInfo(User user)
+    {
+        if(!userRepository.existsById(user.getId()))
+            return "user is not exist";
+        userRepository.save(user);
+        return "update successfully";
+    }
     public String markFavoriteBook(int bookID,int userID)
     {
         try {
 
-            userBookRelationshipRepository.save(new UserBookRelationship(bookID,userID,"like"));
+            userBookRelationshipRepository.save(new UserBookRelationship(new Book(bookID),new User(userID),"like"));
             return "Mark book successfully";
         } catch (Exception e) {
             e.printStackTrace();
             return "Mark book failed";
         }
     }
+    public String unmarkFavoriteBook(int bookID,int userID)
+    {
+        try {
+
+            userBookRelationshipRepository.delete(userBookRelationshipRepository.findOneByBookAndUserAndRelationship(bookID,userID,"like"));
+            return "Unmark book successfully";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Unmark book failed";
+        }
+    }
     public String addBook(Book book,int userID){
         try {
-            bookReponsitory.save(Book);
-            userBookRelationshipRepository.save(new UserBookRelationship(book.getId(),userID,"sell"));
+            bookReponsitory.save(book);
+            userBookRelationshipRepository.save(new UserBookRelationship(book,new User(userID),"sell"));
             return "Add book successfully";
         } catch (Exception e) {
             e.printStackTrace();
@@ -132,7 +180,7 @@ public class UserService {
         try {
             if(verifyUserBook(book.getId(),userID))
                 return "This is not your book";
-            bookReponsitory.save(Book);
+            bookReponsitory.save(book);
             return "Update book successfully";
         } catch (Exception e) {
             e.printStackTrace();
@@ -145,6 +193,7 @@ public class UserService {
             if(verifyUserBook(bookID,userID))
                 return "This is not your book";
             bookReponsitory.deleteById(bookID);
+            userBookRelationshipRepository.delete(userBookRelationshipRepository.findOneByBookAndUserAndRelationship(bookID,userID,"sell"));
             return "Delete book successfully";
         } catch (Exception e) {
             e.printStackTrace();
@@ -154,7 +203,7 @@ public class UserService {
     public boolean verifyUserBook(int bookID,int userID)
     {
         try {
-            return.userBookRelationshipRepository.existsByBookAndUserAndRelationship(bookID,userID,"sell");
+            return userBookRelationshipRepository.existsByBookAndUserAndRelationship(bookID,userID,"sell");
         } catch (Exception e) {
             e.printStackTrace();
             return false;

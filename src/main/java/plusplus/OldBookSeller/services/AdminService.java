@@ -8,27 +8,27 @@ import plusplus.OldBookSeller.reponsitory.entity.Book;
 @Service
 public class AdminService {
     BookReponsitory bookReponsitory;
-    UserRepository userRepository
-    public String addBook(Book book, int userID){
+    UserRepository userRepository;
+    public String addBook(Book book){
         try {
-            bookReponsitory.save(Book);
+            bookReponsitory.save(book);
             return "Add book successfully";
         } catch (Exception e) {
             e.printStackTrace();
             return "Add book failed";
         }
     }
-    public String updateBook(Book book,int userID)
+    public String updateBook(Book book)
     {
         try {
-            bookReponsitory.save(Book);
+            bookReponsitory.save(book);
             return "Update book successfully";
         } catch (Exception e) {
             e.printStackTrace();
             return "Update book failed";
         }
     }
-    public String deleteBook(int bookID,int userID)
+    public String deleteBook(int bookID)
     {
         try {
             bookReponsitory.deleteById(bookID);
@@ -41,7 +41,7 @@ public class AdminService {
     public String deleteUser(int id)
     {
         try {
-            bookReponsitory.deleteById(bookID);
+            bookReponsitory.deleteById(id);
             return "Delete book successfully";
         } catch (Exception e) {
             e.printStackTrace();
