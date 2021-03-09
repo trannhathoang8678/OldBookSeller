@@ -8,17 +8,17 @@ import plusplus.OldBookSeller.controller.request.RetriveRequest;
 import plusplus.OldBookSeller.services.UserService;
 
 @RestController
-@RequestMapping
+@RequestMapping(value = "/login")
 public class LoginController {
     @Autowired
     UserService userService;
-    @GetMapping(value ="/login")
+    @PutMapping
     public String login(@RequestBody LoginRequest loginRequest)
     {
-        return userService.login(loginRequest.getUsername(),loginRequest.getPassword());
+        return userService.login(loginRequest.getEmail(),loginRequest.getPassword());
     }
 
-    @GetMapping(value = "/retrieve")
+    @PutMapping(value = "/retrieve")
     public String retrievePassword(@RequestBody RetriveRequest retriveRequest) {
         return userService.retrievePassword(retriveRequest.getEmail(),retriveRequest.getToken());
     }

@@ -24,7 +24,7 @@ public class HomePageController {
         return userService.getBooksTypes();
     }
     @GetMapping(value="/{id}")
-    public Book bookOfType(@PathVariable int id)
+    public Book bookInDetail(@PathVariable int id)
     {
         return userService.bookInDetail(id);
     }

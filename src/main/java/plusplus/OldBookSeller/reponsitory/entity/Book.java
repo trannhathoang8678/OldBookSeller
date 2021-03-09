@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "BOOK")
+@Table(name = "`BOOK`")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -20,19 +20,17 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
-    @ManyToOne
+    @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST })
     @JoinColumn(name="TYPE_id")
     private Type type;
-
     public Book(Integer id) {
         this.id = id;
     }
-
     @Column(name = "title")
     private String title;
     @Column(name = "description")
     private String description;
-    @Column(name = "published_year")
+    @Column(name = "year_published")
     private Integer publishYear;
     @Column(name = "author")
     private String author;
@@ -40,8 +38,12 @@ public class Book {
     private BigDecimal price;
     @Column(name = "contact_info")
     private String contactInfo;
-    @Column(name = "day_posted")
+    @Column(name = "day_posted", updatable=false)
     private Timestamp postDay;
     @Column(name = "url_image")
     private String urlImage;
+
+    public void setTypeId(int id) {
+        this.type.setId(id);
+    }
 }

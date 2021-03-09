@@ -3,7 +3,7 @@ package plusplus.OldBookSeller.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import plusplus.OldBookSeller.reponsitory.BookReponsitory;
+import plusplus.OldBookSeller.reponsitory.BookRepository;
 import plusplus.OldBookSeller.reponsitory.TypeRepository;
 import plusplus.OldBookSeller.reponsitory.UserBookRelationshipRepository;
 import plusplus.OldBookSeller.reponsitory.UserRepository;
@@ -24,9 +24,13 @@ public class UserService {
     private static SecureRandom random = new SecureRandom();
     @Autowired
     SendEmailService sendEmailService;
+    @Autowired
     UserRepository userRepository;
-    BookReponsitory bookReponsitory;
+    @Autowired
+    BookRepository bookRepository;
+    @Autowired
     TypeRepository typeRepository;
+    @Autowired
     UserBookRelationshipRepository userBookRelationshipRepository;
     public String login(String email, String password) {
         if (userRepository.existsByEmailAndPassword(email, password))
@@ -81,11 +85,18 @@ public class UserService {
     }
     public List<Type> getBooksTypes()
     {
-        return typeRepository.findAll();
+
+        try
+        {return typeRepository.findAll();}
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            return null;
+        }
     }
     public List<Book> booksInType(int typeID) {
         try {
-            return bookReponsitory.findAllByType(typeID);
+            return bookRepository.findAllByType(new Type(typeID));
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -94,7 +105,7 @@ public class UserService {
 
     public List<Book> booksHaveTitle(String title, Pageable pageable) {
         try {
-            return bookReponsitory.findByTitle(title, pageable);
+            return bookRepository.findByTitle(title, pageable);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -103,7 +114,7 @@ public class UserService {
 
     public Book bookInDetail(int id) {
         try {
-            return bookReponsitory.findOneById(id);
+            return bookRepository.findOneById(id);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -112,7 +123,7 @@ public class UserService {
     public List<Book> getBooksUserSell(int userID,Pageable pageable)
     {
         try {
-           return bookReponsitory.findAllByIdIn(userBookRelationshipRepository.findBookIdsWithRelationship(userID,"sell"),pageable);
+           return bookRepository.findAllByIdIn(userBookRelationshipRepository.findBookIdsWithRelationship(userID,"sell"),pageable);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -121,7 +132,7 @@ public class UserService {
     public List<Book> getBooksUserLike(int userID,Pageable pageable)
     {
         try {
-            return bookReponsitory.findAllByIdIn(userBookRelationshipRepository.findBookIdsWithRelationship(userID,"like"),pageable);
+            return bookRepository.findAllByIdIn(userBookRelationshipRepository.findBookIdsWithRelationship(userID,"like"),pageable);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -146,19 +157,21 @@ public class UserService {
     public String markFavoriteBook(int bookID,int userID)
     {
         try {
-
-            userBookRelationshipRepository.save(new UserBookRelationship(new Book(bookID),new User(userID),"like"));
+            if(isUserBookExists(bookID,userID))
+                return "You have already like it";
+            userBookRelationshipRepository.save(new UserBookRelationship(bookRepository.findOneById(bookID),userRepository.findOneById(userID),"like"));
             return "Mark book successfully";
         } catch (Exception e) {
             e.printStackTrace();
             return "Mark book failed";
         }
     }
+
     public String unmarkFavoriteBook(int bookID,int userID)
     {
         try {
 
-            userBookRelationshipRepository.delete(userBookRelationshipRepository.findOneByBookAndUserAndRelationship(bookID,userID,"like"));
+            userBookRelationshipRepository.delete(userBookRelationshipRepository.findOneByBookAndUserAndRelationship(new Book(bookID),new User(userID),"like"));
             return "Unmark book successfully";
         } catch (Exception e) {
             e.printStackTrace();
@@ -167,8 +180,11 @@ public class UserService {
     }
     public String addBook(Book book,int userID){
         try {
-            bookReponsitory.save(book);
-            userBookRelationshipRepository.save(new UserBookRelationship(book,new User(userID),"sell"));
+            Type type = typeRepository.findOneByName(book.getType().getName());
+            if(type !=null)
+            book.setTypeId(type.getId());
+            bookRepository.save(book);
+            userBookRelationshipRepository.save(new UserBookRelationship(book,userRepository.findOneById(userID),"sell"));
             return "Add book successfully";
         } catch (Exception e) {
             e.printStackTrace();
@@ -178,9 +194,12 @@ public class UserService {
     public String updateBook(Book book,int userID)
     {
         try {
-            if(verifyUserBook(book.getId(),userID))
+            Type type = typeRepository.findOneByName(book.getType().getName());
+            if(type !=null)
+            book.setTypeId(type.getId());
+            if(!verifyUserBookSelling(book.getId(),userID))
                 return "This is not your book";
-            bookReponsitory.save(book);
+            bookRepository.save(book);
             return "Update book successfully";
         } catch (Exception e) {
             e.printStackTrace();
@@ -190,20 +209,29 @@ public class UserService {
     public String deleteBook(int bookID,int userID)
     {
         try {
-            if(verifyUserBook(bookID,userID))
+            if(!verifyUserBookSelling(bookID,userID))
                 return "This is not your book";
-            bookReponsitory.deleteById(bookID);
-            userBookRelationshipRepository.delete(userBookRelationshipRepository.findOneByBookAndUserAndRelationship(bookID,userID,"sell"));
+            userBookRelationshipRepository.delete(userBookRelationshipRepository.findOneByBookAndUserAndRelationship(new Book(bookID),new User(userID),"sell"));
             return "Delete book successfully";
         } catch (Exception e) {
             e.printStackTrace();
             return "Delete book failed";
         }
     }
-    public boolean verifyUserBook(int bookID,int userID)
+    public boolean isUserBookExists(int bookID,int userID)
     {
         try {
-            return userBookRelationshipRepository.existsByBookAndUserAndRelationship(bookID,userID,"sell");
+            return userBookRelationshipRepository.existsByBookAndUser(new Book(bookID),new User(userID));
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("isUserBookExists failed");
+            return false;
+        }
+    }
+    public boolean verifyUserBookSelling(int bookID,int userID)
+    {
+        try {
+            return userBookRelationshipRepository.existsByBookAndUserAndRelationship(new Book(bookID),new User(userID),"sell");
         } catch (Exception e) {
             e.printStackTrace();
             return false;

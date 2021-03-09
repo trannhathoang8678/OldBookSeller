@@ -5,22 +5,22 @@ SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 
 -- -----------------------------------------------------
--- Schema bookdb
+-- Schema nhathoang
 -- -----------------------------------------------------
 
 -- -----------------------------------------------------
--- Schema bookdb
+-- Schema nhathoang
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `bookdb` DEFAULT CHARACTER SET utf8 ;
-USE `bookdb` ;
+CREATE SCHEMA IF NOT EXISTS `nhathoang` DEFAULT CHARACTER SET utf8 ;
+USE `nhathoang` ;
 
 -- -----------------------------------------------------
--- Table `bookdb`.`USER`
+-- Table `nhathoang`.`USER`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bookdb`.`USER` (
-  `id` INT NOT NULL,
+CREATE TABLE IF NOT EXISTS `nhathoang`.`USER` (
+  `id` INT NOT NULL AUTO_INCREMENT,
   `email` VARCHAR(45) NOT NULL,
-  `password` VARCHAR(45) NOT NULL,
+  `password` VARCHAR(45) NULL,
   `phonenumber` CHAR(10) NULL,
   `token` VARCHAR(45) NULL,
   PRIMARY KEY (`id`),
@@ -29,9 +29,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `bookdb`.`TYPE`
+-- Table `nhathoang`.`TYPE`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bookdb`.`TYPE` (
+CREATE TABLE IF NOT EXISTS `nhathoang`.`TYPE` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`id`),
@@ -40,32 +40,33 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `bookdb`.`BOOK`
+-- Table `nhathoang`.`BOOK`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bookdb`.`BOOK` (
+CREATE TABLE IF NOT EXISTS `nhathoang`.`BOOK` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `TYPE_id` INT NOT NULL,
   `title` VARCHAR(45) NULL,
+  `url_image` VARCHAR(45) NULL,
   `description` TEXT NULL,
   `year_published` INT NULL,
   `author` VARCHAR(45) NULL,
   `price` DECIMAL NULL,
   `contact_info` VARCHAR(45) NULL,
-  `day_posted` DATE NULL,
+  `day_posted` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   INDEX `fk_BOOK_TYPE_idx` (`TYPE_id` ASC),
   CONSTRAINT `fk_BOOK_TYPE`
     FOREIGN KEY (`TYPE_id`)
-    REFERENCES `bookdb`.`TYPE` (`id`)
+    REFERENCES `nhathoang`.`TYPE` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `bookdb`.`USER_BOOK`
+-- Table `nhathoang`.`USER_BOOK`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bookdb`.`USER_BOOK` (
+CREATE TABLE IF NOT EXISTS `nhathoang`.`USER_BOOK` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `BOOK_id` INT NOT NULL,
   `USER_id` INT NOT NULL,
@@ -75,12 +76,12 @@ CREATE TABLE IF NOT EXISTS `bookdb`.`USER_BOOK` (
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_FAVORITE_BOOK_BOOK1`
     FOREIGN KEY (`BOOK_id`)
-    REFERENCES `bookdb`.`BOOK` (`id`)
+    REFERENCES `nhathoang`.`BOOK` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_FAVORITE_BOOK_USER1`
     FOREIGN KEY (`USER_id`)
-    REFERENCES `bookdb`.`USER` (`id`)
+    REFERENCES `nhathoang`.`USER` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;

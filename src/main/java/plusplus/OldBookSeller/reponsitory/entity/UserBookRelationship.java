@@ -8,7 +8,7 @@ import lombok.Setter;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "USER_BOOK")
+@Table(name = "`USER_BOOK`")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -18,10 +18,10 @@ public class UserBookRelationship {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.REMOVE})
     @JoinColumn(name = "BOOK_id",updatable = false)
     private Book book;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "USER_id",updatable = false)
     private User user;
     @Column(name = "relationship")

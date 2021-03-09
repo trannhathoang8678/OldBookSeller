@@ -8,7 +8,7 @@ import lombok.Setter;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "TYPE")
+@Table(name = "`TYPE`")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -18,8 +18,8 @@ public class Type {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
-    @Column(name = "type")
-    private String type;
+    @Column(name = "name")
+    private String name;
 
     public Type(Integer id) {
         this.id = id;

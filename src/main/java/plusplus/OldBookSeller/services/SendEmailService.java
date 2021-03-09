@@ -8,8 +8,8 @@ import javax.mail.internet.MimeMessage;
 import java.util.Properties;
 @Service
 public class SendEmailService {
-    final String username = "student.plusplus.academy@gmail.com";
-    final String password = "123456aA@";
+    final String username = "raventnhost@gmail.com";
+    final String password = "hoangtn1@";
 
     public void sendEmail(String title, String email, String content) throws Exception{
 
@@ -39,7 +39,6 @@ public class SendEmailService {
 
             Transport.send(message);
 
-            System.out.println("Đã gửi mật khẩu reset tới email: " + email);
 
         } catch (MessagingException e) {
             e.printStackTrace();
