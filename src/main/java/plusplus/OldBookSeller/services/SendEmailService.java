@@ -9,7 +9,7 @@ import java.util.Properties;
 @Service
 public class SendEmailService {
     final String username = "raventnhost@gmail.com";
-    final String password = "hoangtn1@";
+    final String password = "Hoangnt1@";
 
     public void sendEmail(String title, String email, String content) throws Exception{
 

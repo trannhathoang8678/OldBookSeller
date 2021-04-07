@@ -8,12 +8,13 @@
 * Login/Logout
 * Register
 * Retrieve password
-* Add,update,delete books selling
+* Add,update,delete book selling
 * Mark favorite book
 * Display favorite books
 * Display upload books
 * Display user infomation
 * Update user information
 3. Admin function
-* Add,update,delete books
+* Add,update,delete book
+* Add,update,delete type
 * Delete user
